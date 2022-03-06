@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekend | Jadwal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"> 
+  <link rel="stylesheet" href="/assets/script.js"> 
+  <link rel="stylesheet" href="/assets/script.js"> 
+  <link rel="shortcut icon" href="/images/logounai.png">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-sm navbar-dark" style="background-color: rgb(2, 2, 85);">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="dashboard.html"><img style="width: 200px;" src="/images/logoweb.png"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i
+                      class="bi bi-menu-button-wide"></i>Menu</a>
+              <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="jadwal.html"><i
+                              class="bi bi-bar-chart-steps"></i><span></span>Jadwal</a></li>
+                  <li><a class="dropdown-item" href="mahasiswa.html"><i
+                              class="bi bi-clipboard-data"></i><span></span>Data Mahasiswa</a></li>
+                  <li><a class="dropdown-item" href="pemesanan.html"><i
+                              class="bi bi-bag-fill"></i><span></span>Pemesanan</a></li>
+                  <li><a class="dropdown-item" href="index.html"><i
+                              class="bi bi-box-arrow-right"></i></span>Keluar</a></li>
+              </ul>
+          </li>
+      </ul>
+      </div>
+    </div>
+  </nav>  
+
+  <div id="app">
+    <div class="container">
+      <div class="py-5 text-center">
+        <h2>Menu Pemesanan</h2>
+        <p class="lead">Dibawah ini adalah data Pemesanan Weekend</p>
+      </div>
+
+      <div class="col-md-12">
+        <h4 class="mb-3">Data Pemesanan <button class="btn btn-md btn-primary" v-on:click="resetForm()"><i
+              class="bi bi-file-plus-fill"></i>Tambah pemesanan</button>
+        </h4>
+        <table class="table table-striped">
+          <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Status</th>
+            <th>Nim</th>
+            <th>Foto Tanda Tangan</th>
+            <th>Sunting</th>
+            <th>Hapus</th>
+          </tr>
+          <tr v-for="pemesanan in pemesanans">
+            <td>{{ pemesanan.id }}</td>
+            <td>{{ pemesanan.mahasiswa }}</td>
+            <td>{{ pemesanan.status }}</td>
+            <td>{{ pemesanan.nim }}</td>
+            <td><img :src="pemesanan.foto" style="width: 100px;"></td>
+            <td><button class="btn btn-md btn-warning" v-on:click="getEdit(pemesanan)"><i
+                  class="bi bi-pen-fill"></i></button></td>
+            <td><button class="btn btn-danger" v-on:click="getDelete(pemesanan)"><i
+                  class="bi bi-trash-fill"></i></button></td>
+          </tr>
+        </table>
+
+        <div v-if="message" class="alert alert-success" role="alert">
+          {{ message }}
+        </div>
+        <h4 class="mb-3">Informasi Pengguna</h4>
+        <form class="needs-validation" novalidate>
+            <div class="form-floating mb-3">
+              <input v-model="mahasiswa" type="text" class="form-control" id="mahasiswa" placeholder="name@example.com">
+              <label for="mahasiswa">Nama</label>
+            </div>
+          <div class="mb-3">
+            <labal>Status</labal>
+            <div class="form-check">
+              <input v-model="status" class="form-check-input" type="radio" name="status" id="status" value="Diterima">
+              <label class="form-check-label" for="status">
+                Diterima
+              </label>
+            </div>
+            <div class="form-check">
+              <input v-model="status" class="form-check-input" type="radio" name="status" id="status" value="Ditolak">
+              <label class="form-check-label" for="ditolak">
+                Ditolak
+              </label>
+            </div>
+          </div>
+          <div class="form-floating mb-3">
+            <input v-model="nim" type="text" class="form-control" id="nim" placeholder="name@example.com">
+            <label for="nim">NIM</label>
+          </div>
+          <div class="mb-3">
+            <label for="foto" class="form-label">Unggah Foto</label>
+            <input v-model="foto" class="form-control" type="file" id="foto" value="">
+          </div>
+      </div>
+
+      <hr class="mb-4">
+      <button v-if="!editMode && !deleteMode" v-on:click="createPemesanan" class="btn btn-primary btn-lg btn-block"
+        type="submit">Kirim Data</button>
+      <button v-if="editMode" v-on:click="updatePemesanan" class="btn btn-warning btn-lg btn-block"
+        type="submit">Perbaharui Data</button>
+      <button v-if="deleteMode" v-on:click="deletePemesanan" class="btn btn-danger btn-lg btn-block" type="submit">Hapus
+        Data</button>
+
+    </div>
+    <footer class="my-5 pt-5 text-muted text-center text-small">
+      <p class="mb-1">&copy; 2022 Esmeralda</p>
+      <ul class="list-inline">
+        <li class="list-inline-item"><a href="wa.me/6281378472878"><i class="bi bi-whatsapp"></i></a></li>
+        <li class="list-inline-item"><a href="#"><i class="bi bi-instagram"></i></a></li>
+        <li class="list-inline-item"><a href="#"><i class="bi bi-github"></i></a></li>
+      </ul>
+    </footer>
+  </div>
+  </div>
+  <!-- Axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        errors: [],
+        message: null,
+        pemesanans: [],
+        pemesananIdEdit: null,
+        pemesananIdDelete: null,
+        editMode: false,
+        deleteMode: false,
+        mahasiswa: '',
+        status: '',
+        nim: '',
+        foto: '',
+      },
+      mounted: function () {
+        this.getPemesanan();
+      },
+      methods: {
+        getPemesanan() {
+          axios.get('https://621f167a311a705914ffda97.mockapi.io/pemesanan')
+            .then(response => {
+              this.pemesanans = response.data;
+              console.log(response);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        },
+        createPemesanan: function () {
+          axios.post('https://621f167a311a705914ffda97.mockapi.io/pemesanan', {
+            mahasiswa: this.mahasiswa,
+            status: this.status,
+            nim: this.nim,
+            foto: this.foto,
+          })
+            .then(response => {
+              this.getPemesanan();
+              this.message = "Your data has been submitted";
+              console.log(response);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        },
+        resetForm: function () {
+          this.message = null;
+          this.editMode = false;
+          this.deleteMode = false;
+          this.pemesananIdEdit = null;
+          this.mahasiswa = null;
+          this.status = null;
+          this.nim = null;
+          this.foto = null;
+        },
+        getEdit: function (pemesanan) {
+          this.message = null;
+          this.editMode = true;
+          this.deleteMode = false;
+          this.pemesananIdEdit = pemesanan.id;
+          this.mahasiswa = pemesanan.mahasiswa;
+          this.status = pemesanan.status;
+          this.nim = pemesanan.nim;
+          this.foto = pemesanan.foto;
+        },
+        getDelete: function (pemesanan) {
+          this.message = null;
+          this.deleteMode = true;
+          this.editMode = false;
+          this.pemesananIdDelete = pemesanan.id;
+          this.mahasiswa = pemesanan.mahasiswa;
+          this.status = pemesanan.status;
+          this.nim = pemesanan.nim;
+          this.foto = pemesanan.foto;
+        },
+        updatePemesanan: function () {
+          axios.put(`https://621f167a311a705914ffda97.mockapi.io/pemesanan/${this.pemesananIdEdit}`, {
+            mahasiswa: this.mahasiswa,
+            status: this.status,
+            nim: this.nim,
+            foto: this.foto,
+          })
+            .then(res => {
+              // handle success
+              this.message = "Your data has been updated";
+              this.getPemesanan();
+            })
+            .catch(err => {
+              // handle error
+              console.log(err);
+            })
+        },
+        // Delete pemesanan
+        deletePemesanan: function () {
+          axios.delete(`https://621f167a311a705914ffda97.mockapi.io/pemesanan/${this.pemesananIdDelete}`)
+            .then(res => {
+              // handle success
+              this.message = "Your data has been deleted";
+              this.getPemesanan();
+            })
+            .catch(err => {
+              // handle error
+              console.log(err);
+            })
+        }
+      }
+    })
+
+  </script>
+
+
+</body>
+
+</html>
